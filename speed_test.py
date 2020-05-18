@@ -28,20 +28,26 @@ if __name__ == "__main__":
                'nw_nocompile': nb_nw,
                'nw_numba': numba.jit(nb_nw, nopython=True)}
 
-    n = 5
+    metrics = {'nw_parasail': pw.metrics.nw_hamming_metric,
+               'nw_numba': numba.jit(nb_nw, nopython=True)}
+
+    parasail_res = pw.pairwise.apply_pairwise_sq(seqs=mixed_seqs, metric=pw.metrics.nw_hamming_metric, ncpus=1)
+    
+    n = 4
     for name in metrics:
         func = metrics[name]
         if not name == 'nw_numba':
             def test():
-                res = pw.pairwise.apply_pairwise_sq(seqs=mixed_seqs, metric=func, ncpus=1)
+                res = pw.pairwise.apply_pairwise_sq(seqs=mixed_seqs*10, metric=func, ncpus=1)
             res = pw.pairwise.apply_pairwise_sq(seqs=mixed_seqs, metric=func, ncpus=1)
         else:
             def test():
-                res = nb_pairwise_sq(mixed_seqs, func)
+                res = nb_pairwise_sq(mixed_seqs*10, func)
             res = nb_pairwise_sq(mixed_seqs, func)
 
         print("#####################################################")
         print("## %s ##" % name)
         x1 = timeit.timeit(test, number=n) / n
         print(f"\tTIME.IT METHOD: (AVE OF {n} RUNS: {round(x1, 3)} SECONDS")
-        print(res)
+        print(res[:10])
+        print('%1.0f%%' % (100 * np.mean(res == parasail_res)))

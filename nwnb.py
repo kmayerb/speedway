@@ -23,7 +23,7 @@ def nb_nw(seq1, seq2):
         return retval"""
 
     # A function for determining the score between any two bases in alignment
-    def match_score(alpha, beta, gap_penalty = -1,match_award = 1, mismatch_penalty = -1):
+    def match_score(alpha, beta, gap_penalty = -1, match_award = 1, mismatch_penalty = -1):
         if alpha == beta:
             return match_award
         elif alpha == '-' or beta == '-':
@@ -31,7 +31,7 @@ def nb_nw(seq1, seq2):
         else:
             return mismatch_penalty
 
-    def nb_needleman_wunsch(seq1, seq2, gap_penalty = -1,match_award = 1, mismatch_penalty = -1):
+    def nb_needleman_wunsch(seq1, seq2, gap_penalty = -1, match_award = 1, mismatch_penalty = -1):
 
         # Store length of two sequences
         n = len(seq1)  
@@ -119,7 +119,7 @@ def nb_nw(seq1, seq2):
 
     return tot
 
-@numba.jit(nopython=True, parallel=False)
+@numba.jit(nopython=True, parallel=True)
 def distance_vec(dvec, indices, seqs, nb_metric, *args):
     for veci in numba.prange(len(indices)):
         si = seqs[indices[veci, 0]]
@@ -153,7 +153,7 @@ def nb_pairwise_sq(seqs, nb_metric, *args):
     for s in seqs:
         nb_seqs.append(s)
 
-    dvec = np.zeros(int(scipy.special.comb(len(seqs), 2)))
+    dvec = np.zeros(int(scipy.special.comb(len(seqs), 2)), dtype=np.int)
     indices = np.zeros((int(scipy.special.comb(len(seqs), 2)), 2), dtype=np.int)
     for veci, ij in enumerate(itertools.combinations(range(len(seqs)), 2)):
         indices[veci, :] = ij
