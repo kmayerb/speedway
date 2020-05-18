@@ -38,14 +38,14 @@ if __name__ == "__main__":
 		pw.pairwise.apply_pairwise_sq(seqs = mixed_seqs, metric = needleman_wunsch, ncpus = 1)
 
 	x3 = timeit.timeit(wr3, number = n)/n
-	print(f"METHOD: pw.pairwise.apply_pairwise_sq (1 CPU)")
+	print(f"METHOD: pw.pairwise.apply_pairwise_sq(seqs = mixed_seqs, metric = needleman_wunsch, ncpus = 1) (1 CPU)")
 	print(f"\tTIME.IT METHOD: (AVE OF {n} RUNS: {round(x3,2)} SECONDS")
 
 	def wr4():
 		pw.pairwise.apply_pairwise_sq(seqs = mixed_seqs, metric = needleman_wunsch, ncpus = 6)
 	
 	x4 = timeit.timeit(wr4, number = n)/n
-	print(f"METHOD: pw.pairwise.apply_pairwise_sq (8 CPU)")
+	print(f"METHOD: pw.pairwise.apply_pairwise_sq(seqs = mixed_seqs, metric = needleman_wunsch, ncpus = 8) (8 CPU)")
 	print(f"\tTIME.IT METHOD: (AVE OF {n} RUNS: {round(x4,2)} SECONDS")
 
 
