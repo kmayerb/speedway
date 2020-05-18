@@ -5,9 +5,9 @@
 import numba
 import numpy as np
 # A function for making a matrix of zeroes
-@numba.jit(nopython=True)
+#@numba.jit(nopython=True)
 def nb_nw(seq1, seq2):
-
+    """
     def zeros(rows, cols):
         # Define an empty list
         retval = [np.int64(x) for x in range(0)]
@@ -20,7 +20,7 @@ def nb_nw(seq1, seq2):
                 # Add a zero to each column in each row
                 retval[-1].append(0)
         # Return the matrix of zeros
-        return retval
+        return retval"""
 
     # A function for determining the score between any two bases in alignment
     def match_score(alpha, beta, gap_penalty = -1,match_award = 1, mismatch_penalty = -1):
@@ -38,7 +38,7 @@ def nb_nw(seq1, seq2):
         m = len(seq2)
         
         # Generate matrix of zeros to store scores
-        score = zeros(m+1, n+1)
+        score = np.zeros((m+1, n+1))
        
         # Calculate score table
         
@@ -110,6 +110,11 @@ def nb_nw(seq1, seq2):
         
         return (align1, align2)
         
-    nb_needleman_wunsch(seq1, seq2)
-    return 1
+    a1, a2 = nb_needleman_wunsch(seq1, seq2)
+    assert len(a1) == len(a2)
+    tot = 0
+    for i in range(len(a1)):
+        if a1[i] != a2[i]:
+            tot += 1
 
+    return tot
