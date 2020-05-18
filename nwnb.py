@@ -120,11 +120,11 @@ def nb_nw(seq1, seq2):
     return tot
 
 @numba.jit(nopython=True, parallel=True)
-def distance_vec(dvec, indices, seqs, nb_metric, *args):
+def distance_vec(dvec, indices, seqs, nb_metric):
     for veci in numba.prange(len(indices)):
         si = seqs[indices[veci, 0]]
         sj = seqs[indices[veci, 1]]
-        d = nb_metric(si, sj, *args)
+        d = nb_metric(si, sj)
         dvec[veci] = d
 
 def nb_pairwise_sq(seqs, nb_metric, *args):

@@ -2,6 +2,10 @@
 Some speed testing on pwseqdist 
 
 """
+import sys
+from fg_shared import _git
+from os.path import join as opj
+sys.path.append(opj(_git, 'pwseqdist'))
 import pwseqdist as pw
 from nw import *
 from nwnb import nb_nw, nb_pairwise_sq
