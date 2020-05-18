@@ -1,6 +1,7 @@
 # A pure python NW, not necessarily fast
 #https://wilkelab.org/classes/SDS348/2018_spring/labs/lab13-solution.html
-
+import numpy as np
+import operator
 # A function for making a matrix of zeroes
 def zeros(rows, cols):
     # Define an empty list
@@ -104,4 +105,7 @@ def needleman_wunsch(seq1, seq2, gap_penalty = -1,match_award = 1, mismatch_pena
     
     return(align1, align2)
 
-
+def py_nw(seq1, seq2, gap_penalty = -1,match_award = 1, mismatch_penalty = -1):
+    a1, a2 = needleman_wunsch(seq1, seq2, gap_penalty = -1,match_award = 1, mismatch_penalty = -1)
+    tot = np.sum([i for i in map(operator.__ne__, a1, a2)])
+    return tot

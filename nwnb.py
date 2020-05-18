@@ -1,7 +1,7 @@
 
 # Attempt to make this function numba ready
-
-
+import itertools
+import scipy.special
 import numba
 import numpy as np
 # A function for making a matrix of zeroes
@@ -118,3 +118,45 @@ def nb_nw(seq1, seq2):
             tot += 1
 
     return tot
+
+@numba.jit(nopython=True, parallel=False)
+def distance_vec(dvec, indices, seqs, nb_metric, *args):
+    for veci in numba.prange(len(indices)):
+        si = seqs[indices[veci, 0]]
+        sj = seqs[indices[veci, 1]]
+        d = nb_metric(si, sj, *args)
+        dvec[veci] = d
+
+def nb_pairwise_sq(seqs, nb_metric, *args):
+    """Calculate distance between all pairs of seqs using metric
+    and kwargs provided to nb_metric. Will use multiprocessing Pool
+    if ncpus > 1.
+
+    nb_metric must be a numba-compiled function
+
+    Parameters
+    ----------
+    seqs : list
+        List of sequences provided to metric in pairs.
+    metric : numba-compiled function
+        A distance function of the form
+        func(seq1, seq2, **kwargs)
+    **kwargs : keyword arguments
+        Additional keyword arguments are supplied to the metric.
+
+    Returns
+    -------
+    dvec : np.ndarray, length n*(n - 1) / 2
+        Vector form of the pairwise distance matrix.
+        Use scipy.distance.squareform to convert to a square matrix"""
+    nb_seqs = numba.typed.List()
+    for s in seqs:
+        nb_seqs.append(s)
+
+    dvec = np.zeros(int(scipy.special.comb(len(seqs), 2)))
+    indices = np.zeros((int(scipy.special.comb(len(seqs), 2)), 2), dtype=np.int)
+    for veci, ij in enumerate(itertools.combinations(range(len(seqs)), 2)):
+        indices[veci, :] = ij
+
+    distance_vec(dvec, indices, nb_seqs, nb_metric, *args)
+    return dvec
