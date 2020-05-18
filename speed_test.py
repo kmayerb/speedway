@@ -28,18 +28,20 @@ if __name__ == "__main__":
                'nw_nocompile': nb_nw,
                'nw_numba': numba.jit(nb_nw, nopython=True)}
 
-    n = 3
+    n = 5
     for name in metrics:
         func = metrics[name]
         if not name == 'nw_numba':
             def test():
                 res = pw.pairwise.apply_pairwise_sq(seqs=mixed_seqs, metric=func, ncpus=1)
+            res = pw.pairwise.apply_pairwise_sq(seqs=mixed_seqs, metric=func, ncpus=1)
         else:
             def test():
                 res = nb_pairwise_sq(mixed_seqs, func)
-            test() #so that numba pre-commpiles before timing
+            res = nb_pairwise_sq(mixed_seqs, func)
 
         print("#####################################################")
         print("## %s ##" % name)
         x1 = timeit.timeit(test, number=n) / n
-        print(f"\tTIME.IT METHOD: (AVE OF {n} RUNS: {round(x1, 2)} SECONDS")
+        print(f"\tTIME.IT METHOD: (AVE OF {n} RUNS: {round(x1, 3)} SECONDS")
+        print(res)
